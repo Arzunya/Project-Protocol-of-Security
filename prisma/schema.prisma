@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model usuario {
+  id               Int      @id @default(autoincrement())
+  matricula        String?  @db.VarChar
+  nome             String?  @db.VarChar
+  senha            String?  @db.VarChar
+  PhotoData        String?
+  setor            String?
+  documento        String?
+  responsavel      String?
+  email            String?
+  observacoes      String?
+  situacaoCadastro String?
+  empresa          String?
+  ValidFrom        String
+  ValidTo          String
+  tipo             Int
+  status           Int
+  createdAt        DateTime @default(now())
+
+  tipoId          tipo?             @relation(fields: [tipo], references: [id])
+  acesso_usuario  acesso_usuario[]
+  logs            log[]
+  veiculo_usuario veiculo_usuario[]
+  statusId        status?           @relation(fields: [status], references: [id])
+}
+
+model veiculo {
+  id     Int    @id @default(autoincrement())
+  marca  String
+  modelo String
+  cor    String
+  placa  String
+
+  veiculo_usuario veiculo_usuario[]
+}
+
+model veiculo_usuario {
+  id Int @id @default(autoincrement())
+
+  usuario   usuario? @relation(fields: [usuarioId], references: [id])
+  usuarioId Int?
+  veiculo   veiculo? @relation(fields: [veiculoId], references: [id])
+  veiculoId Int?
+}
+
+model acesso {
+  id                 Int                  @id @default(autoincrement())
+  nivel              String               @unique @db.VarChar
+  acesso_usuario     acesso_usuario[]
+  dispositivo_acesso dispositivo_acesso[]
+}
+
+model acesso_usuario {
+  id            Int     @id @default(autoincrement())
+  usuario_id    Int
+  nivel_usuario Int
+  acesso        acesso  @relation(fields: [nivel_usuario], references: [id], onDelete: Cascade)
+  usuario       usuario @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+}
+
+model dispositivo {
+  id             Int     @id @default(autoincrement())
+  nome           String? @db.VarChar
+  n_serial       String? @db.VarChar
+  ip             String? @db.VarChar
+  mac            String? @db.VarChar
+  direcao        String? @db.VarChar
+  horarios       String? @db.VarChar
+  funcionalidade Int?
+
+  logs               log[]
+  dispositivo_acesso dispositivo_acesso[]
+
+  zona                       zona?                       @relation(fields: [zonaId], references: [id])
+  zonaId                     Int?
+  funcionalidade_dispositivo funcionalidade_dispositivo? @relation(fields: [funcionalidade], references: [id])
+}
+
+model dispositivo_acesso {
+  id            Int         @id @default(autoincrement())
+  dispositivoId Int
+  nivelId       Int
+  dispositivo   dispositivo @relation(fields: [dispositivoId], references: [id])
+  nivel         acesso      @relation(fields: [nivelId], references: [id])
+}
+
+model log {
+  id            Int          @id @default(autoincrement())
+  cardName      String?
+  userID        Int?
+  time          String?
+  errorCode     String?
+  method        String?
+  dispositivoId Int?
+  usuario       usuario?     @relation(fields: [userID], references: [id])
+  dispositivo   dispositivo? @relation(fields: [dispositivoId], references: [id])
+}
+
+model zona {
+  id           Int           @id @default(autoincrement())
+  nome         String
+  dispositivos dispositivo[]
+}
+
+model tipo {
+  id   Int    @id
+  nome String
+
+  usuario usuario[]
+}
+
+model status {
+  id       Int    @id
+  situacao String
+
+  usuario usuario[]
+}
+
+model funcionalidade_dispositivo {
+  id           Int           @id
+  nome         String
+  dispositivos dispositivo[]
+}
+
+model notificacao {
+  id          Int      @id @default(autoincrement())
+  dispositivo String
+  UserID      Int
+  alerta      String
+  createdAt   DateTime @default(now())
+}
