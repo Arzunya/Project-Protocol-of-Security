@@ -7,7 +7,7 @@ export class IntelbrasDepositoBase {
         UserType: 0,
         UseTime: 1300000,
         Authority: 2,
-        CardNo: "12EA3004"
+        
       },
       ...user,
     };

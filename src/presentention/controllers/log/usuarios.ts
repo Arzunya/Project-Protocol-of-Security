@@ -17,5 +17,4 @@ export class LogUsuarioController implements Controller {
     return ok(usuario);
   }
 }
-
 //apenas testando
