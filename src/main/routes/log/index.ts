@@ -11,6 +11,6 @@ export default (router: Router): void => {
   router.get("/logs", adaptRoute(makeLogasController()));
   router.get("/logNotificacao", adaptRoute(makeLogNotificacaoController()));
   router.get("/logVeiculo", adaptRoute(makeLogVeiculoController()));
-  router.get("/logHistorico", adaptRoute(makeHistoricoController()))
+  router.get("/logHistorico/:id", adaptRoute(makeHistoricoController()))
 };
 

@@ -2,10 +2,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function getLogHistorico(id: number) {
-  const historico = await prisma.log.findMany({
+export async function getUltimoLogDoUsuario(id: number) {
+  const logsDoUsuario = await prisma.log.findMany({
+    
     where: {
-      id: id
+      userID: id
     },
     orderBy: {
       id: 'desc'
@@ -20,5 +21,9 @@ export async function getLogHistorico(id: number) {
     },
   });
 
-  return historico;
+  if (!logsDoUsuario) {
+    throw ('Nenhum log encontrado para o usuário especificado.');
+  }
+
+  return logsDoUsuario;
 }

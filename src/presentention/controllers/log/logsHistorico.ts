@@ -1,5 +1,5 @@
 import { badRequest, serverError, ok } from "../../helpers/http-helper";
-import { getLogHistorico } from "@infra/db/postgresdb/log-repository/exibir-logHistorico";
+import { getUltimoLogDoUsuario } from "@infra/db/postgresdb/log-repository/exibir-logHistorico";
 import { Controller, HttpRequest, HttpResponse } from "../../protocols";
 
 export class LogHistoricoController implements Controller {
@@ -9,7 +9,7 @@ export class LogHistoricoController implements Controller {
 
     if (!id) throw "Falta sequencia do usuário!"
 
-    const historico = await (getLogHistorico);
+    const historico = await getUltimoLogDoUsuario(id);
 
     if (!historico) {
       throw "Usuário não encontrado"
