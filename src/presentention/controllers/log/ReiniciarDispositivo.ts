@@ -1,7 +1,7 @@
 import { badRequest, serverError, ok } from "../../helpers/http-helper";
 import { Controller, HttpRequest, HttpResponse } from "../../protocols";
 import { getDispositivoUm } from "@infra/db/postgresdb/log-repository/exibir-dispositivosUm";
-import { IntelbrasReiniciar } from "../../../infra/intelbras/controllers/user/reiniciar/reiniciar";
+import { IntelbrasReiniciar } from "../../../infra/intelbras/controllers/reiniciar/reiniciar";
 
 export class ReiniciarDispositivoUmController implements Controller {
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {

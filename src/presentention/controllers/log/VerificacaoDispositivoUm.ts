@@ -1,7 +1,7 @@
 import { badRequest, serverError, ok } from "../../helpers/http-helper";
 import { Controller, HttpRequest, HttpResponse } from "../../protocols";
 import { getDispositivoUm } from "@infra/db/postgresdb/log-repository/exibir-dispositivosUm";
-import { IntelbrasInfo } from "../../../infra/intelbras/controllers/user/verificacao/verificacao";
+import { IntelbrasInfo } from "../../../infra/intelbras/controllers/verificacao/verificacao";
 
 export class VerificacaoDispositivoUmController implements Controller {
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
