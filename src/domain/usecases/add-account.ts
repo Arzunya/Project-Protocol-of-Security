@@ -8,7 +8,6 @@ export interface AddAccountModel {
   setor: string;
   documento: string;
   responsavel: string;
-  veiculo: string;
   email: string;
   observacoes: string;
   situacaoCadastro: string;
@@ -19,6 +18,8 @@ export interface AddAccountModel {
   ValidFrom: string;
   ValidTo: string;
   acessos: number[];
+  veiculo: number[];  // Corrigido aqui
+
   
   
 }

@@ -6,6 +6,7 @@ export async function getUsuarioVarios() {
   const usuarioVarios = await prisma.usuario.findMany({
     take: 50,
     orderBy: { id: "desc" },
+    include: {veiculo_usuario:true}
   });
 
   usuarioVarios.map((value) => {

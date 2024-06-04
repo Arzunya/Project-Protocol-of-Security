@@ -14,7 +14,7 @@ export class AccountPostgreRepository implements AddAccountRepository {
     const finded = await this.prisma.usuario.findFirst({ where: { matricula: accountData.matricula } });
 
     if (finded) {
-      throw "Matrícula ja cadastrada !";
+      throw "Matrícula ja cadastrada!";
     }
 
     try {
@@ -34,7 +34,7 @@ export class AccountPostgreRepository implements AddAccountRepository {
           tipo: accountData.tipo,
           status:accountData.status,
           ValidFrom: accountData.ValidFrom,
-          ValidTo: accountData.ValidTo
+          ValidTo: accountData.ValidTo,
         },
       });
 
@@ -43,6 +43,14 @@ export class AccountPostgreRepository implements AddAccountRepository {
           return { usuario_id: insertedAccount.id, nivel_usuario: ac };
         }),
       });
+
+      await this.prisma.veiculo_usuario.createMany({
+        data: accountData.veiculo.map((veiculoId: any) => {
+          return { usuarioId: insertedAccount.id, veiculoId: veiculoId };
+        }),
+      });
+
+      
 
       const findNewUser = await this.prisma.usuario.findFirst({
         where: { id: insertedAccount.id },
