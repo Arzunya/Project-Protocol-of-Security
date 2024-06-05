@@ -10,7 +10,6 @@ export interface AttAccountModel {
   responsavel: string | null;
   email: string | null;
   observacoes: string | null;
-  situacaoCadastro: string | null;
   empresa: string | null;
   matricula: string | null;
   PhotoData: string | null;

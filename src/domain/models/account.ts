@@ -8,7 +8,6 @@ export interface AccountModel {
   responsavel: string | null;
   email: string | null;
   observacoes: string | null;
-  situacaoCadastro: string | null;
   empresa: string | null;
   tipo: number;
   status: number;

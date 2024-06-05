@@ -28,7 +28,6 @@ export class AccountPostgreRepository implements AddAccountRepository {
           responsavel: accountData.responsavel,
           email: accountData.email,
           observacoes: accountData.observacoes,
-          situacaoCadastro: accountData.situacaoCadastro,
           empresa: accountData.empresa,
           PhotoData: accountData.PhotoData,
           tipo: accountData.tipo,
@@ -49,8 +48,6 @@ export class AccountPostgreRepository implements AddAccountRepository {
           return { usuarioId: insertedAccount.id, veiculoId: veiculoId };
         }),
       });
-
-      
 
       const findNewUser = await this.prisma.usuario.findFirst({
         where: { id: insertedAccount.id },

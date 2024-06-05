@@ -10,7 +10,6 @@ export interface AddAccountModel {
   responsavel: string;
   email: string;
   observacoes: string;
-  situacaoCadastro: string;
   empresa: string;
   nivel_usuario: string;
   PhotoData: string;

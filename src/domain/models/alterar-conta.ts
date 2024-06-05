@@ -8,7 +8,6 @@ export interface AltAccountModel {
   responsavel: string | null;
   email: string | null;
   observacoes: string | null;
-  situacaoCadastro: string | null;
   empresa: string | null;
   PhotoData: string | null;
   tipo: number;

@@ -18,7 +18,6 @@ model usuario {
   responsavel      String?
   email            String?
   observacoes      String?
-  situacaoCadastro String?
   empresa          String?
   ValidFrom        String
   ValidTo          String
@@ -133,7 +132,7 @@ model funcionalidade_dispositivo {
 
 model notificacao {
   id          Int      @id @default(autoincrement())
-  dispositivo String
+  dispositivo String?
   UserID      Int
   alerta      String
   createdAt   DateTime @default(now())

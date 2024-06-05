@@ -1,7 +1,7 @@
 import { AxiosDigestAuth, AxiosDigestAuthOptions } from "@lukesthl/ts-axios-digest-auth";
 
 export class IntelbrasDepositoBase {
-  async add(user: { UserName: string; UserID: string; Password: string; ip: string; PhotoData: string; ValidFrom: string; ValidTo: string }): Promise<boolean> {
+  async add(user: { UserName: string | null; UserID: string; Password: string | null; ip: string | null; PhotoData: string; ValidFrom: string; ValidTo: string }): Promise<boolean> {
     const data = {
       ...{
         UserType: 0,

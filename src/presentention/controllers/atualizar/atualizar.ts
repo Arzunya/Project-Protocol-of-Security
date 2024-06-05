@@ -11,7 +11,7 @@ export class AtualizarController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     
-    const { id, matricula, nome, senha, setor, documento, responsavel, email, observacoes, situacaoCadastro, empresa,
+    const { id, matricula, nome, senha, setor, documento, responsavel, email, observacoes, empresa,
       PhotoData, tipo, status, nivel_usuario, ValidFrom, ValidTo } = httpRequest.body;
       
     const account = await this.attAccount.alt({
@@ -24,7 +24,6 @@ export class AtualizarController implements Controller {
       responsavel,
       email,
       observacoes,
-      situacaoCadastro,
       empresa,
       PhotoData,
       tipo,
