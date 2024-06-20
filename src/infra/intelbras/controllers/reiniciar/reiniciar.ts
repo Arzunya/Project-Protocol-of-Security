@@ -14,7 +14,7 @@ export class IntelbrasReiniciar {
 
       const response = await digestAuth.request({
         method: "GET",
-        url: `http://${ip}:50080/cgi-bin/magicBox.cgi?action=reboot`,
+        url: `http://${ip}:55580/cgi-bin/magicBox.cgi?action=reboot`,
       });
 
       if (response.status !== 200) return false;

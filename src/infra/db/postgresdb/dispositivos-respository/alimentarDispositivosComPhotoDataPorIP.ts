@@ -29,7 +29,7 @@ export async function alimentarDispositivosComPhotoDataPorIP(idAcesso: number) {
       // console.log(JSON.stringify({ FaceList: data })); // Remova a camada extra de array
       await digestAuth.request({
         method: "POST",
-        url: `http://${ip}:50080/cgi-bin/AccessFace.cgi?action=insertMulti`,
+        url: `http://${ip}:55580/cgi-bin/AccessFace.cgi?action=insertMulti`,
         data: { FaceList: data }, // Use diretamente o array data
       });
     }

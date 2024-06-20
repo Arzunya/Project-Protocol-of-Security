@@ -24,14 +24,14 @@ export class IntelbrasDepositoBase {
 
       const response = await digestAuth.request({
         method: "GET",
-        url: `http://${user.ip}:50080/cgi-bin/AccessUser.cgi?action=insertMulti`,
+        url: `http://${user.ip}:55580/cgi-bin/AccessUser.cgi?action=insertMulti`,
         data: { UserList: [data] },
       });
 
       //ENVIA FOTO PARA DISPOSITIVO
       await digestAuth.request({
         method: "POST",
-        url: `http://${user.ip}:50080/cgi-bin/AccessFace.cgi?action=insertMulti`,
+        url: `http://${user.ip}:55580/cgi-bin/AccessFace.cgi?action=insertMulti`,
         data: { FaceList: [{ UserID: String(user.UserID), PhotoData: [user.PhotoData] }] },
       });
 

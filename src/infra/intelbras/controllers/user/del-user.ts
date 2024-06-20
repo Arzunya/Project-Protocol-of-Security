@@ -19,7 +19,7 @@ export class IntelbrasDeletarUsuario {
       };
       const digestAuth = new AxiosDigestAuth(authOptions);
       
-      const url = `http://${user.ip}:50080/cgi-bin/AccessUser.cgi?action=removeMulti&UserIDList[0]=${user.UserID}`;
+      const url = `http://${user.ip}:55580/cgi-bin/AccessUser.cgi?action=removeMulti&UserIDList[0]=${user.UserID}`;
       console.log(`URL da solicitação: ${url}`);
 
       const response = await digestAuth.request({

@@ -14,7 +14,7 @@ export class IntelbrasInfo {
 
       const response = await digestAuth.request({
         method: "GET",
-        url: `http://${ip}:50080/cgi-bin/magicBox.cgi?action=getSoftwareVersion`,
+        url: `http://${ip}:55580/cgi-bin/magicBox.cgi?action=getSoftwareVersion`,
       });
 
       if (response.status !== 200) return false;

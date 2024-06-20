@@ -100,10 +100,23 @@ model log {
   errorCode     String?
   method        String?
   dispositivoId Int?
+  message       String?
+  facial        String?
   usuario       usuario?     @relation(fields: [userID], references: [id])
   dispositivo   dispositivo? @relation(fields: [dispositivoId], references: [id])
 }
 
+model logRefeitorio {
+  id            Int          @id @default(autoincrement())
+  cardName      String?
+  userID        Int?
+  time          String?
+  errorCode     String?
+  method        String?
+  dispositivoId Int?
+  message       String?
+  facial        String?
+}
 model zona {
   id           Int           @id @default(autoincrement())
   nome         String
@@ -136,4 +149,23 @@ model notificacao {
   UserID      Int
   alerta      String
   createdAt   DateTime @default(now())
+}
+
+model eventRefeitorio {
+  id          Int      @id @default(autoincrement())
+  Code        String
+  Action      String
+  PhysicalAddress   String
+}
+
+model monitoramento {
+  id            Int          @id @default(autoincrement())
+  cardName      String?
+  userID        Int?
+  time          String?
+  errorCode     String?
+  method        String?
+  dispositivoId Int?
+  message       String?
+  facial        String?
 }

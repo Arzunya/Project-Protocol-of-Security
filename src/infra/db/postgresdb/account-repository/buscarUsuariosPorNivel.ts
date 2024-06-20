@@ -45,19 +45,19 @@ export async function buscarUsuariosPorNivelEChamarAPI({ idDispositivo }: { idDi
     // DELETA TODOS OS USUARIOS DO DISPOSITIVO
     await digestAuth.request({
       method: "POST",
-      url: `http://${dispositivo.ip}:50080/cgi-bin/AccessUser.cgi?action=removeAll`,
+      url: `http://${dispositivo.ip}:55580/cgi-bin/AccessUser.cgi?action=removeAll`,
     });
 
     const response = await digestAuth.request({
       method: "POST",
-      url: `http://${dispositivo.ip}:50080/cgi-bin/AccessUser.cgi?action=insertMulti`,
+      url: `http://${dispositivo.ip}:55580/cgi-bin/AccessUser.cgi?action=insertMulti`,
       data: { UserList: data },
     });
 
     // ENVIA FOTO PARA DISPOSITIVO
     await digestAuth.request({
       method: "POST",
-      url: `http://${dispositivo.ip}:50080/cgi-bin/AccessFace.cgi?action=insertMulti`,
+      url: `http://${dispositivo.ip}:55580/cgi-bin/AccessFace.cgi?action=insertMulti`,
       data: { FaceList: data.map((value) => ({ UserID: value.UserID, PhotoData: [value.PhotoData] })) },
       //  data: { FaceList: [{ UserID: String(user.UserID), PhotoData: [user.PhotoData] }] }, // Use diretamente o array data
     });

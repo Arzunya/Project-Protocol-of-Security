@@ -4,6 +4,8 @@ import fs from "fs";
 import multer from "multer";
 import formidable from "formidable";
 import { insertEventData } from "@infra/db/postgresdb/log-repository/log";
+import { insertEventDataSeguranca } from "@infra/db/postgresdb/log-repository/log-seguranca";
+
 import pathTeste, { dirname } from "path";
 
 const prisma = new PrismaClient();
@@ -68,13 +70,16 @@ export default (router: Router): void => {
       } else if (request.method == "POST") {
         const form = formidable({ encoding: "utf-8", uploadDir: "./temp" });
         let fields: formidable.Fields<string>;
-        let files: formidable.Files<"info" | "file">;
-        // console.log(dirname(".."));
+        let files: formidable.Files<"info" | "null" | "file">;
 
         const date = new Date();
         let path = "";
 
         [fields, files] = await form.parse(request);
+        files.null?.map((event) => {
+          path = event.filepath;
+        });
+
         files.file?.map((event) => {
           path = event.filepath;
         });
@@ -84,11 +89,19 @@ export default (router: Router): void => {
           return eventos;
         });
 
-        const result = await insertEventData(eventsData, clientIP);
+        
+        const resultSeg = await insertEventDataSeguranca(eventsData, clientIP);
 
-        if (result) {
-          fs.writeFileSync(`./public/${result.id}.jpg`, fs.readFileSync(path));
+        if (resultSeg) {
+          fs.writeFileSync(`./publicSeg/${resultSeg.id}.jpg`, fs.readFileSync(path));
           fs.rmSync(path);
+        } else {
+          const result = await insertEventData(eventsData, clientIP);
+
+          if (result) {
+            fs.writeFileSync(`./public/${result.id}.jpg`, fs.readFileSync(path));
+            fs.rmSync(path);
+          }
         }
 
         response.end("received POST request.");

@@ -89,11 +89,20 @@ const errorCodeMap: { [key: number]: string } = {
   169: "Tempo excedido do cartão ilegal",
 };
 
-const specificPhysicalAddresses = ["3c:e3:6b:23:2f:c3"];
+const macSeguranca = ["80:85:44:2c:1f:f1"];
 
-export async function insertEventData(eventData: IEvento[], clientIP: string): Promise<{ id: number } | undefined> {
+export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: string): Promise<{ id: number } | undefined> {
   try {
     const uniqueEventSets = removeDuplicates(eventData);
+
+    
+    const hasSpecificPhysicalAddress = uniqueEventSets.some(eventGroup =>
+      eventGroup.Events.some(event => macSeguranca.includes(event.PhysicalAddress))
+    );
+
+    if (!hasSpecificPhysicalAddress) {
+      return undefined;
+    }
 
     for (const eventGroup of uniqueEventSets) {
       for (const event of eventGroup.Events) {
@@ -105,25 +114,7 @@ export async function insertEventData(eventData: IEvento[], clientIP: string): P
 
         const { CardName, UserID, Method, ErrorCode } = Data;
 
-        if (Code === "AlarmLocal" && Action === "Stop" && PhysicalAddress) {
-          await prisma.eventRefeitorio.create({
-            data: {
-              Code: "AlarmLocal",
-              Action: "Stop",
-              PhysicalAddress: PhysicalAddress,
-            },
-          });
-
-          await new Promise(resolve => setTimeout(resolve, 100));
-
-          await prisma.eventRefeitorio.deleteMany({
-            where: {
-              PhysicalAddress: PhysicalAddress
-            }
-          })
-
-          break;
-        }
+        
 
         if (!CardName && ErrorCode !== 16) {
           continue;
@@ -135,14 +126,11 @@ export async function insertEventData(eventData: IEvento[], clientIP: string): P
         const dispositivo = await prisma.dispositivo.findFirst({ where: { ip: clientIP } });
         const user = await prisma.usuario.findFirst({ where: { id: Number(UserID) } });
 
-        const isSpecificFacial = PhysicalAddress && specificPhysicalAddresses.includes(PhysicalAddress);
 
         //console.log(`Processing event: ${JSON.stringify(event)}`);
         //console.log(`isSpecificFacial: ${isSpecificFacial}`);
 
-        let message = isSpecificFacial ? "Transição para o refeitório iniciada" : "Acesso registrado";
-
-        const { id } = await prisma.log.create({
+        const { id } = await prisma.monitoramento.create({
           data: {
             cardName: CardName || "DESCONHECIDO",
             userID: user ? user.id : null,
@@ -150,36 +138,11 @@ export async function insertEventData(eventData: IEvento[], clientIP: string): P
             errorCode: errorCodeDescription,
             method: methodDescription,
             dispositivoId: dispositivo ? dispositivo.id : null,
-            message: message,
+            message: "Solicitada a entrada na sala de monitoramento",
             facial: PhysicalAddress,
           },
         });
 
-        if (isSpecificFacial) {
-          console.log(`Creating second log for specific facial: ${PhysicalAddress}`);
-          await prisma.logRefeitorio.create({
-            data: {
-              cardName: CardName || "DESCONHECIDO",
-              userID: user ? user.id : null,
-              time: eventGroup.Time,
-              errorCode: errorCodeDescription,
-              method: methodDescription,
-              dispositivoId: dispositivo ? dispositivo.id : null,
-              message: message,
-              facial: PhysicalAddress,
-            },
-          });
-
-          listenForAlarmLocalEvent(
-            PhysicalAddress,
-            CardName,
-            user ? user.id : null,
-            methodDescription,
-            errorCodeDescription,
-            dispositivo ? dispositivo.id : null,
-            eventGroup.Time,
-          );
-        }
         return { id };
       }
     }
@@ -189,117 +152,6 @@ export async function insertEventData(eventData: IEvento[], clientIP: string): P
     console.error("Erro ao inserir eventos no banco de dados:", error);
     throw error;
   }
-}
-
-async function listenForAlarmLocalEvent(
-  PhysicalAddress: string,
-  cardName: string,
-  userID: number | null,
-  methodDescription: string,
-  errorCodeDescription: string,
-  dispositivoId: number | null,
-  eventTime: string,
-) {
-  return new Promise<void>((resolve, reject) => {
-    let timeout = 10000; 
-    const intervalTime = 100; 
-    let foundEvent = false;
-
-    const intervalId = setInterval(async () => {
-      
-      const facial = await prisma.eventRefeitorio.findMany({
-        where: {
-          PhysicalAddress: PhysicalAddress,
-        },
-      });
-
-      if (facial.some((event) => event.PhysicalAddress === PhysicalAddress)) {
-        foundEvent = true;
-
-        const lastLog = await prisma.logRefeitorio.findFirst({
-          where: { facial: PhysicalAddress },
-          orderBy: { time: "desc" },
-        });
-
-        if (lastLog) {
-
-          await prisma.log.create({
-            data: {
-              cardName: lastLog.cardName,
-              userID: lastLog.userID,
-              time: new Date().toISOString(),
-              errorCode: lastLog.errorCode,
-              method: lastLog.method,
-              dispositivoId: lastLog.dispositivoId,
-              message: "Transição para o refeitório efetuada",
-              facial: PhysicalAddress,
-            },
-          });
-
-          await prisma.logRefeitorio.create({
-            data: {
-              cardName: lastLog.cardName,
-              userID: lastLog.userID,
-              time: new Date().toISOString(),
-              errorCode: lastLog.errorCode,
-              method: lastLog.method,
-              dispositivoId: lastLog.dispositivoId,
-              message: "Transição para o refeitório efetuada",
-              facial: PhysicalAddress,
-            },
-          });
-
-          
-
-          clearInterval(intervalId);
-          resolve();
-          return;
-        }
-      }
-
-      if (!foundEvent) {
-      }
-
-      if (timeout <= 0) {
-        clearInterval(intervalId);
-
-        const lastLog = await prisma.logRefeitorio.findFirst({
-          where: { facial: PhysicalAddress },
-          orderBy: { time: "desc" },
-        });
-
-        if (lastLog) {
-          await prisma.log.create({
-            data: {
-              cardName: lastLog.cardName,
-              userID: lastLog.userID,
-              time: new Date().toISOString(),
-              errorCode: lastLog.errorCode,
-              method: lastLog.method,
-              dispositivoId: lastLog.dispositivoId,
-              message: "Transição para o refeitório não efetuada",
-              facial: PhysicalAddress,
-            },
-          });
-
-          await prisma.logRefeitorio.create({
-            data: {
-              cardName: lastLog.cardName,
-              userID: lastLog.userID,
-              time: new Date().toISOString(),
-              errorCode: lastLog.errorCode,
-              method: lastLog.method,
-              dispositivoId: lastLog.dispositivoId,
-              message: "Transição para o refeitório não efetuada",
-              facial: PhysicalAddress,
-            },
-          });
-        }
-        resolve();
-      }
-      timeout -= intervalTime;
-    }, intervalTime);
-  });
 }
 
 function removeDuplicates(eventData: IEvento[]): IEvento[] {

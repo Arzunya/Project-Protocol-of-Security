@@ -14,7 +14,7 @@ export class IntelbrasFoto {
 
       const response = await digestAuth.request({
         method: "GET",
-        url: `http://${ip}:50080/cgi-bin/snapshot.cgi`,
+        url: `http://${ip}:55580/cgi-bin/snapshot.cgi`,
         responseType: "arraybuffer",
       });
 
