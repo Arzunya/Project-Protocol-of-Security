@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IEvento } from "../../../../main/routes/log/log-routes";
+import { socketSeg } from "../../../../infra/socketIO/socketSeguranca";
 
 const prisma = new PrismaClient();
 
@@ -116,6 +117,10 @@ export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: s
 
         
 
+        
+
+        
+
         if (!CardName && ErrorCode !== 16) {
           continue;
         }
@@ -130,7 +135,7 @@ export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: s
         //console.log(`Processing event: ${JSON.stringify(event)}`);
         //console.log(`isSpecificFacial: ${isSpecificFacial}`);
 
-        const { id } = await prisma.monitoramento.create({
+        const  {id}  = await prisma.monitoramento.create({
           data: {
             cardName: CardName || "DESCONHECIDO",
             userID: user ? user.id : null,
@@ -143,7 +148,9 @@ export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: s
           },
         });
 
-        return { id };
+        await socketSeg(Data, id, event.PhysicalAddress)
+
+        return {id};
       }
     }
 

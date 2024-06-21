@@ -7,6 +7,7 @@ import { insertEventData } from "@infra/db/postgresdb/log-repository/log";
 import { insertEventDataSeguranca } from "@infra/db/postgresdb/log-repository/log-seguranca";
 
 import pathTeste, { dirname } from "path";
+import { socketSeg } from "@infra/socketIO/socketSeguranca";
 
 const prisma = new PrismaClient();
 const upload = multer();
@@ -89,7 +90,6 @@ export default (router: Router): void => {
           return eventos;
         });
 
-        
         const resultSeg = await insertEventDataSeguranca(eventsData, clientIP);
 
         if (resultSeg) {
