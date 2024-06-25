@@ -89,7 +89,9 @@ const errorCodeMap: { [key: number]: string } = {
   169: "Tempo excedido do cartão ilegal",
 };
 
-const specificPhysicalAddresses = ["3c:e3:6b:23:2f:c3"];
+//3c:e3:6b:23:2f:c3
+//30:e1:f1:c0:33:95
+const specificPhysicalAddresses = ["30:e1:f1:c0:33:95"];
 
 export async function insertEventData(eventData: IEvento[], clientIP: string): Promise<{ id: number } | undefined> {
   try {
@@ -137,8 +139,9 @@ export async function insertEventData(eventData: IEvento[], clientIP: string): P
 
         const isSpecificFacial = PhysicalAddress && specificPhysicalAddresses.includes(PhysicalAddress);
 
-        //console.log(`Processing event: ${JSON.stringify(event)}`);
-        //console.log(`isSpecificFacial: ${isSpecificFacial}`);
+        if (isSpecificFacial && !CardName) {
+          continue
+        }
 
         let message = isSpecificFacial ? "Transição para o refeitório iniciada" : "Acesso registrado";
 
@@ -227,7 +230,7 @@ async function listenForAlarmLocalEvent(
             data: {
               cardName: lastLog.cardName,
               userID: lastLog.userID,
-              time: new Date().toISOString(),
+              time: eventTime,
               errorCode: lastLog.errorCode,
               method: lastLog.method,
               dispositivoId: lastLog.dispositivoId,
@@ -240,7 +243,7 @@ async function listenForAlarmLocalEvent(
             data: {
               cardName: lastLog.cardName,
               userID: lastLog.userID,
-              time: new Date().toISOString(),
+              time: eventTime,
               errorCode: lastLog.errorCode,
               method: lastLog.method,
               dispositivoId: lastLog.dispositivoId,
@@ -248,8 +251,6 @@ async function listenForAlarmLocalEvent(
               facial: PhysicalAddress,
             },
           });
-
-          
 
           clearInterval(intervalId);
           resolve();
@@ -273,7 +274,7 @@ async function listenForAlarmLocalEvent(
             data: {
               cardName: lastLog.cardName,
               userID: lastLog.userID,
-              time: new Date().toISOString(),
+              time: eventTime,
               errorCode: lastLog.errorCode,
               method: lastLog.method,
               dispositivoId: lastLog.dispositivoId,
@@ -286,7 +287,7 @@ async function listenForAlarmLocalEvent(
             data: {
               cardName: lastLog.cardName,
               userID: lastLog.userID,
-              time: new Date().toISOString(),
+              time: eventTime,
               errorCode: lastLog.errorCode,
               method: lastLog.method,
               dispositivoId: lastLog.dispositivoId,
@@ -310,8 +311,9 @@ function removeDuplicates(eventData: IEvento[]): IEvento[] {
     const eventSetString = JSON.stringify(eventGroup.Events);
     if (!seenEventSets.includes(eventSetString)) {
       seenEventSets.push(eventSetString);
-      uniqueEventSets.push(eventGroup);
+      uniqueEventSets.push(eventGroup)
     }
+
   }
 
   return uniqueEventSets;

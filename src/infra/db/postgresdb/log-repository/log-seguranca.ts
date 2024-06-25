@@ -90,36 +90,29 @@ const errorCodeMap: { [key: number]: string } = {
   169: "Tempo excedido do cartão ilegal",
 };
 
-const macSeguranca = ["80:85:44:2c:1f:f1"];
+const macSeguranca = ["80:85:44:2c:1f:h7"];
 
 export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: string): Promise<{ id: number } | undefined> {
   try {
     const uniqueEventSets = removeDuplicates(eventData);
 
-    
     const hasSpecificPhysicalAddress = uniqueEventSets.some(eventGroup =>
       eventGroup.Events.some(event => macSeguranca.includes(event.PhysicalAddress))
     );
-
+    
     if (!hasSpecificPhysicalAddress) {
       return undefined;
     }
 
     for (const eventGroup of uniqueEventSets) {
       for (const event of eventGroup.Events) {
-        const { Data, Action, PhysicalAddress, Code } = event;
+        const { Data, PhysicalAddress } = event;
 
         if (!Data) {
           continue;
         }
 
         const { CardName, UserID, Method, ErrorCode } = Data;
-
-        
-
-        
-
-        
 
         if (!CardName && ErrorCode !== 16) {
           continue;
@@ -130,10 +123,6 @@ export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: s
 
         const dispositivo = await prisma.dispositivo.findFirst({ where: { ip: clientIP } });
         const user = await prisma.usuario.findFirst({ where: { id: Number(UserID) } });
-
-
-        //console.log(`Processing event: ${JSON.stringify(event)}`);
-        //console.log(`isSpecificFacial: ${isSpecificFacial}`);
 
         const  {id}  = await prisma.monitoramento.create({
           data: {

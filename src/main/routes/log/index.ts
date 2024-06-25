@@ -5,8 +5,6 @@ import { makeLogNotificacaoController } from "../../factories/logNotificacao-con
 import { makeLogVeiculoController } from "../../factories/logVeiculo";
 import { makeHistoricoController } from "../../factories/logHistorico-controller";
 
-
-
 export default (router: Router): void => {
   router.get("/logs", adaptRoute(makeLogasController()));
   router.get("/logNotificacao", adaptRoute(makeLogNotificacaoController()));

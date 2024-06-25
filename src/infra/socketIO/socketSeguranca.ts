@@ -13,7 +13,7 @@ export async function socketSeg (Data: { CardName: string; CardNo: string; CardT
             }
         });
 
-        io.emit('seg', Data.CardName, id, dispositivo?.ip, dispositivo?.nome);
+        io.emit('seg', Data.CardName, id, dispositivo?.nome);
     } catch (error) {
         console.error('Erro na consulta do dispositivo:', error);
     } finally {
