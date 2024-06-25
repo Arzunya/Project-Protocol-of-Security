@@ -90,7 +90,7 @@ const errorCodeMap: { [key: number]: string } = {
   169: "Tempo excedido do cartão ilegal",
 };
 
-const macSeguranca = ["80:85:44:2c:1f:h7"];
+const macSeguranca = ["80:85:44:2c:1f:f1"];
 
 export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: string): Promise<{ id: number } | undefined> {
   try {
@@ -123,7 +123,7 @@ export async function insertEventDataSeguranca(eventData: IEvento[], clientIP: s
 
         const dispositivo = await prisma.dispositivo.findFirst({ where: { ip: clientIP } });
         const user = await prisma.usuario.findFirst({ where: { id: Number(UserID) } });
-
+        
         const  {id}  = await prisma.monitoramento.create({
           data: {
             cardName: CardName || "DESCONHECIDO",

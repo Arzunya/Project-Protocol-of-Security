@@ -282,7 +282,7 @@ async function listenForAlarmLocalEvent(
               facial: PhysicalAddress,
             },
           });
-
+          
           await prisma.logRefeitorio.create({
             data: {
               cardName: lastLog.cardName,
